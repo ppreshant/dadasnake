@@ -11,21 +11,33 @@ filesOI <- unique(unlist(snakemake@input)[-1])
 print(paste0("reading sample table from ",sampleFile))
 sampleTab <- read.delim(sampleFile,stringsAsFactors=F)
 
+# count raw reads
 if(snakemake@params[["currentStep"]] == "raw"){
   print("extracting read numbers")
  # print(system2("which",args=c("Rscript"),stdout=T))
-  readnums <- sapply(filesOI,function(x){
+
+  readnums <- sapply(filesOI,function(x){ # function to count # of basepairs
     if(grepl(".gz$",x)){
       as.numeric(system2("zcat",args=c(x,"| wc -l"),stdout=T))/4
     }else{
       as.numeric(unlist(strsplit(system2("wc",args=c("-l",x),stdout=T),split=" "))[1])/4
     }
   })
+
+  # ensure that the prefix directory ends with a single '/'
   prefix <- gsub("[/]{2}$","/",paste0(snakemake@config[["raw_directory"]],"/"))
-  names(readnums) <- gsub(paste0("^[/]{0,1}[^/]*",prefix),"",names(readnums))
+
+  # get the raw file names (which should match to the r1_file, r2_file columns in the sample_table.tsv)
+  names(readnums) <- gsub(paste0(".*/",prefix),"",names(readnums)) # remove the prefix and anything before
+  # names(readnums) <- gsub(paste0("^[/]{0,1}[^/]*",prefix),"",names(readnums)) # this is not accounting for relative path, results in NA..
+
+  # write the respective read numbers in the table, extracting from the readnums list(/vector?)
   sampleTab$reads_raw_r1 <- sapply(sampleTab$r1_file,function(x) readnums[x])
   sampleTab$reads_raw_r2 <- sapply(sampleTab$r2_file,function(x) readnums[x])
   write.table(sampleTab,snakemake@output[[1]],sep="\t",quote=F,row.names=F)
+
+
+  # count after primer removal
 }else if(snakemake@params[["currentStep"]] == "primers"){
   print("extracting read numbers")
   readnums <- sapply(filesOI,function(x) {
@@ -57,12 +69,15 @@ if(snakemake@params[["currentStep"]] == "raw"){
   colnames(numsPerSample)[1] <- "sample"
   perSample <- merge(tabPerSample,numsPerSample,by="sample")
   write.table(perSample,snakemake@output[[2]],sep="\t",quote=F,row.names=F)
+
+
+  # count reads after filtering
 }else if(snakemake@params[["currentStep"]] == "filtered"){
   print("extracting read numbers")
   readnums <- sapply(filesOI,function(x) as.numeric(unlist(strsplit(system2("zcat",args=c(x,"| wc -l"),stdout=T),split=" "))[1])/4)
   prefix <- "filtered/"
   suffix <- ".{5}fastq.gz"
-  names(readnums) <- gsub(prefix,"",names(readnums)) 
+  names(readnums) <- gsub(prefix,"",names(readnums))
   runs_sams <- sapply(names(readnums),function(x) unlist(strsplit(x,split="/")))
   runs_sams[2,] <- gsub(suffix,"",runs_sams[2,])
   sampleTab$reads_filtered_fwd <- apply(sampleTab[,c("run","sample")],1,
@@ -163,6 +178,3 @@ if(snakemake@params[["currentStep"]] == "raw"){
   }
   write.table(sampleTab,snakemake@output[[1]],sep="\t",quote=F,row.names=F)
 }
-
-
-
