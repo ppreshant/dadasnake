@@ -19,3 +19,4 @@ config/config.default.yaml
 dadasnake_initialized/
 *.stderr
 *.stdout
+dadasnake_output
