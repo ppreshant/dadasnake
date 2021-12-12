@@ -1,0 +1,63 @@
+email: ""
+raw_directory: "../../data_NGS" # relative paths unless stated
+sample_table: "../samples.tsv"
+outputdir: "../output16S"
+taxonomy:
+  mothur:
+    do: false
+    db_path: "../DBs"
+    tax_db: "SILVA_138.1_SSURef_NR99_tax_silva"
+  decipher:
+    do: true
+    db_path: "../DBs/decipher"
+    tax_db: "SILVA_SSU_r138_2019.RData"
+    db_short_names: "SILVA_SSU_r138_2019"
+    look_for_species: false # Does not work with NNNs in unmerged reads -/ needs some code editing decipher_ID
+    spec_db: "../DBs/DADA2/silva_species_assignment_v138.1.fa.gz"  # non existent
+do_primers: true
+do_dada: true
+do_taxonomy: true
+do_postprocessing: true
+primers:
+  fwd:
+    sequence: AACGCGAAGAACCTTAC
+    name: 968F_AOS20B
+  rvs:
+    sequence: AACCTTCGGGCATGG
+    name: AOS21B
+paired: true
+sequencing_direction: 'fwd_1'   # "unknown" if the direction is ambiguous/varies across files
+filtering:
+  trunc_length:
+    fwd: 200 #-- discards shorter ones?  # default was 0 ; trying arbitrary cutoff
+    rvs: 160 # default was 0 ; quality steadily declining, so trying arbitrary cutoff
+  trunc_qual:
+    fwd: 2 # changed from 16s.yml = 13 -> too high, discarding too many reads, retaining only short ones of 30 bp
+    rvs: 2 # "
+  max_EE:
+    fwd: 2 # default of 2; changed from 16s.yml of 0.2 - seems too stringent, only 400 sequences are left
+    rvs: 5 # recommended when rvs are poorer - DADA2 tutorial
+dada:
+    pool: "pseudo" # changed from default -- includes singletons
+blast:  # what is the point of BLAST if taxonomy is being done by other tools?
+  do: false     # changed from 16s.yml        # no BLAST database present
+  run_basta: false # changed from 16s.yml
+pair_merging:
+  just_concatenate: true # Reads don't overlap after filtering (only 304 pairs merged out of 80,000)
+hand_off:
+  biom: true
+  phyloseq: false
+final_table_filtering:
+  do: true
+  keep_target_taxa: "."
+  target_min_length: 180 # changed from 245 in 16s.yaml
+  target_max_length: 275
+postprocessing:
+  rarefaction_curve: true # somewhat dubious for DADA2 since singletons are removed as "noise" --
+  funguild:
+    do: false
+  treeing:
+    do: true
+  tax4fun2:
+    do: false # changed from 16s.yml
+    user_data: true
