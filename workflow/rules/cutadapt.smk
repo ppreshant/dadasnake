@@ -22,7 +22,7 @@ rule primers_control:
 rule combine_or_rename:
     input:
         "reporting/primerNumbers_perLibrary.tsv",
-        files = lambda wildcards: get_lib_perRunAndSample(wildcards,"preprocessing/{run}/",".{direction}.fastq.gz")    
+        files = lambda wildcards: get_lib_perRunAndSample(wildcards,"preprocessing/{run}/",".{direction}.fastq.gz")
     output:
         "preprocessing/{run}/{sample}.{direction}.fastq.gz"
     wildcard_constraints:
@@ -56,7 +56,31 @@ rule input_numbers:
     conda: ENVDIR + "dada2_env.yml"
     log: "logs/countInputReads.log"
     script:
-        SCRIPTSDIR+"report_readNumbers.R" 
+        SCRIPTSDIR+"report_readNumbers.R"
+
+# --------------- debugging script # will not be run in the regular pipeline since output file is orphan
+rule debug_input_numbers:
+    input:
+        "reporting/sample_table.tsv",
+        expand("{raw_directory}/{file}", file=samples.r1_file,raw_directory=RAW),
+        expand("{raw_directory}/{file}", file=samples.r2_file,raw_directory=RAW)
+    output:
+        'reporting/test_readNumbers.txt'
+        # report("reporting/readNumbers2.tsv",category="Reads")
+    threads: 1
+    params:
+        currentStep = "raw",
+        raw_directory = RAW
+    resources:
+        runtime="12:00:00",
+        mem=config['normalMem']
+    conda: ENVDIR + "dada2_env.yml"
+    log: "logs/debug_countInputReads.log"
+    script:
+        SCRIPTSDIR+"debug_readNumbers.R"
+# end of debugging -------------------------
+
+
 
 
 rule primer_numbers:
@@ -95,10 +119,10 @@ if config['sequencing_direction'] == "fwd_1":
         message: "Running cutadapt on {input}. Assuming forward primer is in read 1. {config[primers][fwd][sequence]}"
         shell:
             """
-            TMPD=$(mktemp -d -t --tmpdir={TMPDIR} 'XXXXXX') 
+            TMPD=$(mktemp -d -t --tmpdir={TMPDIR} 'XXXXXX')
             FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
             RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
-                
+
             cutadapt -g {config[primers][fwd][sequence]} -G {config[primers][rvs][sequence]} \
             {config[primer_cutting][indels]} -n {config[primer_cutting][count]} \
             -O {config[primer_cutting][overlap]} \
@@ -175,7 +199,7 @@ else:
              -j {threads} -e {config[primer_cutting][perc_mismatch]} \
              --untrimmed-output=$TMPD/{wildcards.library}.fwd_unt.fastq.gz --untrimmed-paired-output=$TMPD/{wildcards.library}.rvs_unt.fastq.gz \
              -o $TMPD/{wildcards.library}.fwd.fastq.gz -p $TMPD/{wildcards.library}.rvs.fastq.gz {input} &> {log}
-            
+
             cutadapt -a $RVS_RC -A $FWD_RC \
              {config[primer_cutting][indels]} -n {config[primer_cutting][count]} \
               -m 1:1 \
@@ -200,6 +224,3 @@ else:
             cat $TMPD/{wildcards.library}.fwd.final.fastq.gz >> {output[0]}
             cat $TMPD/{wildcards.library}.rvs.final.fastq.gz >> {output[1]}
             """
-
-
-
