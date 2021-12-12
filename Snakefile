@@ -23,6 +23,8 @@ def getThreads(max):
         realThreads = max
     return realThreads
 
+
+# processing paired end Reads
 if config['paired']:
     if 'primers' in STEPS:
         include:
@@ -32,7 +34,7 @@ if config['paired']:
             "workflow/rules/copying.smk"
     if 'dada' in STEPS:
         if not config['dada']['pool']:
-            if not config['big_data']: 
+            if not config['big_data']:
                 include:
                     "workflow/rules/dada.paired.smk"
             else:
@@ -45,6 +47,8 @@ if config['paired']:
             else:
                 include:
                     "workflow/rules/dada.paired.pool.smk"
+
+# processing non-paired end reads
 else:
     if 'primers' in STEPS:
         include:
@@ -67,6 +71,8 @@ else:
             else:
                 include:
                     "workflow/rules/dada.single.pool.smk"
+
+# common processing for paired and non-paired end reads
 if 'dada' in STEPS:
     if config['big_data']:
         include:
@@ -121,7 +127,7 @@ else:
     onstart:
         shell('echo "$(date) {config[sessionName]}" | mail -s "dadasnake started" {EMAIL} ')
 
-localrules: ALL 
+localrules: ALL
 #, SamplesPrint
 
 # master command
@@ -140,6 +146,19 @@ rule SamplesPrint:
     log: "logs/printsamples.log"
     resources:
         runtime="01:00:00",
-        mem=config['normalMem']    
+        mem=config['normalMem']
     run:
         samples.to_csv(path_or_buf=output[0],sep="\t",index=False,index_label=False)
+
+DIRECTION_LIST = ['fwd', 'rvs'] # to reuse
+import glob
+
+rule clean_filtered_outputs:
+    input: # identify the outputs of all the filter commands to delete
+        glob.glob("filtered/*"), # filtered output files
+        expand('stats/fastqc_filtered_{dir}/', dir = DIRECTION_LIST),  # stats of filtered samples
+        expand("stats/multiqc_filtered_{dir}_report.html", dir = DIRECTION_LIST),
+        expand("stats/QC_filtered.{run}.{dir}.pdf", run=samples.run.unique(), dir = DIRECTION_LIST), # PDF outputs
+        glob.glob("reporting/filteredNumbers_per*")  # reports
+        #'dada.done' # the marker for the dada2 pipeline; useful to run subsequent steps ; run it alone
+    shell: "rm -r {input}"
