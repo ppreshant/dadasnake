@@ -29,7 +29,7 @@ paired: true
 sequencing_direction: 'fwd_1'   # "unknown" if the direction is ambiguous/varies across files
 filtering:
   trunc_length:
-    fwd: 200 #-- discards shorter ones?  # default was 0 ; trying arbitrary cutoff
+    fwd: 200 #-- discards shorter ones. Retains reads with bad ends  # default was 0 ; trying arbitrary cutoff
     rvs: 160 # default was 0 ; quality steadily declining, so trying arbitrary cutoff
   trunc_qual:
     fwd: 2 # changed from 16s.yml = 13 -> too high, discarding too many reads, retaining only short ones of 30 bp
@@ -48,9 +48,9 @@ hand_off:
   biom: true
   phyloseq: false
 final_table_filtering:
-  do: true
+  do: false # default true; 
   keep_target_taxa: "."
-  target_min_length: 180 # changed from 245 in 16s.yaml
+  target_min_length: 100 # changed from 245 in 16s.yaml
   target_max_length: 275
 postprocessing:
   rarefaction_curve: true # somewhat dubious for DADA2 since singletons are removed as "noise" --
