@@ -32,7 +32,7 @@ if config['sessionKind'] == "cluster":
     if config['bigCores'] == "" or int(config['bigCores']) == 0:
         if config['big_data']:
             if config['settingsLocked']:
-                raise Exception("You're attempting to submit a big dataset in dadasnake to a cluster, but haven't specified more than 0 cores to be used. Ask the person who set up dadasnake to change BIGMEM_CORES in " + ROOTDIR + "VARIABLE_CONFIG to run a big data set, or set big_data to false in your config file.") 
+                raise Exception("You're attempting to submit a big dataset in dadasnake to a cluster, but haven't specified more than 0 cores to be used. Ask the person who set up dadasnake to change BIGMEM_CORES in " + ROOTDIR + "VARIABLE_CONFIG to run a big data set, or set big_data to false in your config file.")
             else:
                 raise Exception("You're attempting to submit a big dataset in dadasnake to a cluster, but haven't specified more than 0 cores to be used. Change bigCores in the config file to run a big data set, or set big_data to false in your config file.")
         else:
@@ -110,10 +110,13 @@ if os.path.isabs(os.path.expandvars(config['sample_table'])):
 else:
     sam_path = os.getcwd() + "/" + os.path.expandvars(config['sample_table'])
 try:
-    samples = pd.read_table(sam_path)
+    samples = pd.read_table(sam_path) # Default UTF-8 encoding
 except:
-    print("Sample table was not found. Please enter the absolute path and file name in the config file.")
-    raise
+    try:
+        samples = pd.read_table(sam_path, encoding='utf-16') # try UTF-16 instead
+    except:
+        print("Sample table was not found. Please enter the absolute path and file name in the config file.")
+        raise
 if 'run' in samples.columns:
     samples['run'] = samples['run'].astype(str)
     for r in samples['run']:
@@ -125,7 +128,7 @@ else:
 if samples[['library','run']].duplicated().any():
     raise Exception('names in library should be unique within runs.')
 samples = samples.set_index(["library","run"],drop=False)
-samples.index = samples.index.set_levels([i.astype(str) for i in samples.index.levels]) 
+samples.index = samples.index.set_levels([i.astype(str) for i in samples.index.levels])
 samples['library'] = samples['library'].astype(str)
 for lib in samples['library']:
     if not re.match(r"[0-9a-zA-Z]",lib):
@@ -148,7 +151,7 @@ else:
                     if len(csl) > 1:
                         raise Exception('names in library should differ from names of samples that have multiple libraries in the same run.')
                 elif csam==clib:
-                    raise Exception('names in library should differ from unrelated sample names.')    
+                    raise Exception('names in library should differ from unrelated sample names.')
 if 'r1_file' not in samples.columns:
     raise Exception("You haven't provided file names for read 1 - column should be named r1_file.")
 if config['paired'] and 'r2_file' not in samples.columns:
@@ -208,7 +211,7 @@ if config['do_taxonomy']:
                     if len(DADA_SPEC) == 1:
                         DADADB_SPEC = dict(zip(DADADB_NAMES,[DADA_SPEC] * len(DADADB_MULT)))
                     else:
-                        DADADB_SPEC = dict(zip(DADADB_NAMES,DADA_SPEC))    
+                        DADADB_SPEC = dict(zip(DADADB_NAMES,DADA_SPEC))
                 else:
                     DADADB_SPEC = {}
             else:
@@ -218,7 +221,7 @@ if config['do_taxonomy']:
                     if len(DADA_SPEC) == 1:
                         DADADB_SPEC = dict(zip(DADADB_FILES,[DADA_SPEC] * len(DADADB_MULT)))
                     else:
-                        DADADB_SPEC = dict(zip(DADADB_FILES,DADA_SPEC)) 
+                        DADADB_SPEC = dict(zip(DADADB_FILES,DADA_SPEC))
                 else:
                     DADADB_SPEC = {}
         elif DADADB_OLD:
@@ -227,13 +230,13 @@ if config['do_taxonomy']:
                 if DADA_SPEC:
                     DADADB_SPEC = dict(zip(DADADB_NAMES,DADA_SPEC))
                 else:
-                    DADADB_SPEC = {}        
+                    DADADB_SPEC = {}
             else:
                 DADADB = dict(zip([os.path.basename(DADADB_OLD)],[DADADB_OLD]))
                 if DADA_SPEC:
                     DADADB_SPEC = dict(zip([os.path.basename(DADADB_OLD)],DADA_SPEC))
                 else:
-                    DADADB_SPEC = {}        
+                    DADADB_SPEC = {}
         else:
             DADADB = {}
             DADADB_SPEC = {}

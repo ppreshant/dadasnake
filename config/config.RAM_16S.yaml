@@ -1,7 +1,7 @@
 email: ""
 raw_directory: "../../data_NGS" # relative paths unless stated
-sample_table: "../samples.tsv"
-outputdir: "../outputsludge"
+sample_table: "../sample_list/S046_samples.tsv"
+outputdir: "../output_S046"
 taxonomy:
   mothur:
     do: false
@@ -21,10 +21,10 @@ do_postprocessing: true
 primers:
   fwd:
     sequence: AACGCGAAGAACCTTAC
-    name: 968F_AOS20B
+    name: oRM017_968F_AOS20B
   rvs:
-    sequence: AACCTTCGGGCATGG
-    name: AOS21B
+    sequence: GTTTCATGTGATCCGGATAAC # updated reverse primer from AOS21B
+    name: oRM019_AOS62B
 paired: true
 sequencing_direction: 'fwd_1'   # "unknown" if the direction is ambiguous/varies across files
 filtering:
