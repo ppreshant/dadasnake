@@ -1,7 +1,7 @@
 email: ""
 raw_directory: "../../data_NGS" # relative paths unless stated
 sample_table: "../samples.tsv"
-outputdir: "../output16S"
+outputdir: "../outputsludge"
 taxonomy:
   mothur:
     do: false
@@ -38,7 +38,7 @@ filtering:
     fwd: 2 # default of 2; changed from 16s.yml of 0.2 - seems too stringent, only 400 sequences are left
     rvs: 5 # recommended when rvs are poorer - DADA2 tutorial
 dada:
-    pool: "pseudo" # changed from default -- includes singletons
+    pool: "false" # changed from default 'false' -- "pseudo" includes singletons/rare ASVs
 blast:  # what is the point of BLAST if taxonomy is being done by other tools?
   do: false     # changed from 16s.yml        # no BLAST database present
   run_basta: false # changed from 16s.yml
@@ -48,7 +48,7 @@ hand_off:
   biom: true
   phyloseq: false
 final_table_filtering:
-  do: false # default true; 
+  do: false # default true;
   keep_target_taxa: "."
   target_min_length: 100 # changed from 245 in 16s.yaml
   target_max_length: 275
