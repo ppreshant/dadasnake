@@ -153,12 +153,34 @@ rule SamplesPrint:
 DIRECTION_LIST = ['fwd', 'rvs'] # to reuse
 import glob
 
+# Custom rules : Executed separately from the workflow
+
+# Make a fasta file of all the OTUs in the final taxonomy table tsv
+rule taxonomyTable_to_fasta: # run from the datasnake directory within conda snakemake_env
+    input: "sequenceTables/all.seqTab.tax.tsv"
+    output: "OTUsequences.fa"
+    message: "Saved OTUs into a single fasta file"
+    shell: # Remove header, grab first two columns from input, make fasta
+        r"""
+        touch {output}
+        cat {input} | tail +2 | awk -F'\t' '{{print ">" $1 "\n" $2}}' > {output}
+        """
+
+# Custom rule to clean or rerun specific segments of the workflow
+# This rule should not run in the regular pipeline since it has no outputs.. But this can only be run once
 rule clean_filtered_outputs:
     input: # identify the outputs of all the filter commands to delete
         glob.glob("filtered/*"), # filtered output files
         expand('stats/fastqc_filtered_{dir}/', dir = DIRECTION_LIST),  # stats of filtered samples
         expand("stats/multiqc_filtered_{dir}_report.html", dir = DIRECTION_LIST),
         expand("stats/QC_filtered.{run}.{dir}.pdf", run=samples.run.unique(), dir = DIRECTION_LIST), # PDF outputs
-        glob.glob("reporting/filteredNumbers_per*")  # reports
+        glob.glob("reporting/filteredNumbers_per*"),  # reports
+        "sequenceTables/all.seqTab.RDS", # inputs to data_control -- makes dada.done final
+        "sequenceTables/all.seqs.fasta",
+        "reporting/finalNumbers_perSample.tsv"
         #'dada.done' # the marker for the dada2 pipeline; useful to run subsequent steps ; run it alone
+    message: "Successfully removed files {input}. \n You can rerun the filtering step now using these as targets"
     shell: "rm -r {input}"
+
+# after clearing these intermediate files, run snakemake with these files as target:
+# stats/multiqc_filtered_{fwd,rvs}_report.html stats/QC_filtered.1.{fwd,rvs}.pdf reporting/filteredNumbers_perLibrary.tsv
