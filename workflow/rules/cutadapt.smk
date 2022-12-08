@@ -40,6 +40,7 @@ rule combine_or_rename:
         else:
             shell("mv {input.files} {output}")
 
+# Count the raw reads
 rule input_numbers:
     input:
         "reporting/sample_table.tsv",
@@ -59,31 +60,8 @@ rule input_numbers:
     script:
         SCRIPTSDIR+"report_readNumbers.R"
 
-# --------------- debugging script # will not be run in the regular pipeline since output file is orphan
-rule debug_input_numbers:
-    input:
-        "reporting/sample_table.tsv",
-        expand("{raw_directory}/{file}", file=samples.r1_file,raw_directory=RAW),
-        expand("{raw_directory}/{file}", file=samples.r2_file,raw_directory=RAW)
-    output:
-        'reporting/test_readNumbers.txt'
-        # report("reporting/readNumbers2.tsv",category="Reads")
-    threads: 1
-    params:
-        currentStep = "raw",
-        raw_directory = RAW
-    resources:
-        runtime="12:00:00",
-        mem=config['normalMem']
-    conda: ENVDIR + "dada2_env.yml"
-    log: "logs/debug_countInputReads.log"
-    script:
-        SCRIPTSDIR+"debug_readNumbers.R"
-# end of debugging -------------------------
 
-
-
-
+# Count reads after primer processing
 rule primer_numbers:
     input:
         "reporting/readNumbers.tsv",
@@ -103,7 +81,7 @@ rule primer_numbers:
         SCRIPTSDIR+"report_readNumbers.R"
 
 
-
+# run cutadapt to trim primers
 if config['sequencing_direction'] == "fwd_1":
     rule cut_primer_both:
         input:
