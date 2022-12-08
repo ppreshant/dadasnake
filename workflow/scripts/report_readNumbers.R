@@ -11,14 +11,15 @@ filesOI <- unique(unlist(snakemake@input)[-1])
 print(paste0("reading sample table from ",sampleFile))
 sampleTab <- read.delim(sampleFile,stringsAsFactors=F)
 
+
 # count raw reads
 if(snakemake@params[["currentStep"]] == "raw"){
   print("extracting read numbers")
  # print(system2("which",args=c("Rscript"),stdout=T))
 
-  readnums <- sapply(filesOI,function(x){ # function to count # of reads
+  readnums <- sapply(filesOI,function(x){ # Count # of reads in each file
     if(grepl(".gz$",x)){
-      as.numeric(system2("zcat",args=c(x,"| wc -l"),stdout=T))/4
+      as.numeric(system2("zcat",args=c(x,"| wc -l"),stdout=T))/4 # for compressed files (.gz)
     }else{
       as.numeric(unlist(strsplit(system2("wc",args=c("-l",x),stdout=T),split=" "))[1])/4
     }
@@ -28,8 +29,7 @@ if(snakemake@params[["currentStep"]] == "raw"){
   prefix <- gsub("[/]{2}$","/",paste0(snakemake@config[["raw_directory"]],"/"))
 
   # get the raw file names (which should match to the r1_file, r2_file columns in the sample_table.tsv)
-  names(readnums) <- gsub(paste0(".*/",prefix),"",names(readnums)) # remove the prefix and anything before
-  # names(readnums) <- gsub(paste0("^[/]{0,1}[^/]*",prefix),"",names(readnums)) # this is not accounting for relative path, results in NA..
+  names(readnums) <- gsub(paste0("^[/]{0,1}[^/]*",prefix),"",names(readnums)) # remove the directory path prefix and anything before
 
   # write the respective read numbers in the table, extracting from the readnums list(/vector?)
   sampleTab$reads_raw_r1 <- sapply(sampleTab$r1_file,function(x) readnums[x])
@@ -69,6 +69,7 @@ if(snakemake@params[["currentStep"]] == "raw"){
   colnames(numsPerSample)[1] <- "sample"
   perSample <- merge(tabPerSample,numsPerSample,by="sample")
   write.table(perSample,snakemake@output[[2]],sep="\t",quote=F,row.names=F)
+
 
 
   # count reads after filtering
