@@ -1,7 +1,7 @@
 email: ""
 raw_directory: "../../data_NGS" # relative paths unless stated
-sample_table: "../sample_list/S046_samples.tsv"
-outputdir: "../output_S046"
+sample_table: "../sample_list/samples_S056-1.tsv"
+outputdir: "../output_S056"
 taxonomy:
   mothur:
     do: false
@@ -12,8 +12,8 @@ taxonomy:
     db_path: "../DBs/decipher"
     tax_db: "SILVA_SSU_r138_2019.RData"
     db_short_names: "SILVA_SSU_r138_2019"
-    look_for_species: false # Does not work with NNNs in unmerged reads -/ needs some code editing decipher_ID
-    spec_db: "../DBs/DADA2/silva_species_assignment_v138.1.fa.gz"  # non existent
+    look_for_species: true # Does not work with NNNs in unmerged reads with just_concatenate -/ needs some code editing decipher_ID
+    spec_db: "../DBs/DADA2/silva_species_assignment_v138.1.fa.gz"
 do_primers: true
 do_dada: true
 do_taxonomy: true
@@ -29,21 +29,21 @@ paired: true
 sequencing_direction: 'fwd_1'   # "unknown" if the direction is ambiguous/varies across files
 filtering:
   trunc_length:
-    fwd: 200 #-- discards shorter ones. Retains reads with bad ends  # default was 0 ; trying arbitrary cutoff
-    rvs: 160 # default was 0 ; quality steadily declining, so trying arbitrary cutoff
+    fwd: 0 #-- ~200-230 ; discards shorter this lengthm hence retains reads with only ends that are bad # default was 0 ; trying arbitrary cutoff
+    rvs: 0 # ~ 160 - 230 ; default was 0 ; quality steadily declining, so trying arbitrary cutoff
   trunc_qual:
     fwd: 2 # changed from 16s.yml = 13 -> too high, discarding too many reads, retaining only short ones of 30 bp
     rvs: 2 # "
   max_EE:
-    fwd: 2 # default of 2; changed from 16s.yml of 0.2 - seems too stringent, only 400 sequences are left
-    rvs: 5 # recommended when rvs are poorer - DADA2 tutorial
+    fwd: 4 # August uses 4..; default of 2; changed from 16s.yml of 0.2 - seems too stringent, only 400 sequences are left
+    rvs: 4 # " ; 5 was recommended when rvs are poorer - DADA2 tutorial
 dada:
-    pool: "false" # changed from default 'false' -- "pseudo" includes singletons/rare ASVs
+    pool: "pseudo" # default is 'false' -- "pseudo" includes singletons/rare ASVs
 blast:  # what is the point of BLAST if taxonomy is being done by other tools?
   do: false     # changed from 16s.yml        # no BLAST database present
   run_basta: false # changed from 16s.yml
 pair_merging:
-  just_concatenate: true # Reads don't overlap after filtering (only 304 pairs merged out of 80,000)
+  just_concatenate: false # set to 'true' if reads don't overlap after filtering (only 304 pairs merged out of 80,000)
 hand_off:
   biom: true
   phyloseq: false
