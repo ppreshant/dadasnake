@@ -105,10 +105,14 @@ if EMAIL != "":
         EMAIL = ""
         print("Your email address is not valid, you will not receive notifications.")
 
-if os.path.isabs(os.path.expandvars(config['sample_table'])):
+
+# clarify path for raw data directory
+if os.path.isabs(os.path.expandvars(config['sample_table'])): # absolute path
     sam_path = os.path.expandvars(config['sample_table'])
 else:
-    sam_path = os.getcwd() + "/" + os.path.expandvars(config['sample_table'])
+    sam_path = os.path.normpath(os.path.join(os.getcwd() + "/" + os.path.expandvars(config['sample_table']))) # relative path
+
+# read sample table. Works with both UTF-8 or UTF-16 encodings
 try:
     samples = pd.read_table(sam_path) # Default UTF-8 encoding
 except:
@@ -157,10 +161,12 @@ if 'r1_file' not in samples.columns:
 if config['paired'] and 'r2_file' not in samples.columns:
     raise Exception("You haven't provided file names for read 2 - column should be named r2_file.")
 
-if os.path.isabs(os.path.expandvars(config['raw_directory'])):
+
+# clarify path for raw data directory
+if os.path.isabs(os.path.expandvars(config['raw_directory'])): # absolute path
     RAW = os.path.expandvars(config['raw_directory'])
 else:
-    RAW = os.getcwd() + "/" + os.path.expandvars(config['raw_directory'])
+    RAW = os.path.normpath(os.path.join( os.getcwd() + "/" + os.path.expandvars(config['raw_directory']))) # relative path
 config['raw_directory'] = RAW
 
 

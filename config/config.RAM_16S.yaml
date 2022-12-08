@@ -1,6 +1,6 @@
 email: ""
-raw_directory: "../../data_NGS" # relative paths unless stated
-sample_table: "../sample_list/samples_S056-1.tsv"
+raw_directory: "../../data_NGS" # absolute or relative paths, both are fine
+sample_table: "../sample_list/samples_S056.tsv"
 outputdir: "../output_S056"
 taxonomy:
   mothur:

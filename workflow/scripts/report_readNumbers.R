@@ -16,7 +16,7 @@ if(snakemake@params[["currentStep"]] == "raw"){
   print("extracting read numbers")
  # print(system2("which",args=c("Rscript"),stdout=T))
 
-  readnums <- sapply(filesOI,function(x){ # function to count # of basepairs
+  readnums <- sapply(filesOI,function(x){ # function to count # of reads
     if(grepl(".gz$",x)){
       as.numeric(system2("zcat",args=c(x,"| wc -l"),stdout=T))/4
     }else{
