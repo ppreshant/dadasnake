@@ -28,10 +28,25 @@ rule blast_nucleotide:
     params:
         # Usable options and specifiers for the different output formats are listed here:
         # https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/blast/blastn.html.
-        format="6 qseqid sseqid evalue",
+        format="6 qseqid sseqid evalue mismatch length",
         extra=""
     wrapper:
         "v1.21.0/bio/blast/blastn"
+
+# Simplify BLAST output. Select top hit per query : with custom R script
+rule simplify_blast:
+    input:
+        "mapping/all.seqs.blast.txt"
+    log:
+        "logs/all.seqs.blast.log"
+    threads:
+        2
+    output:
+        "mapping/top_all.seqs.blast.txt"
+    conda:
+        ENVDIR + "tidyverse_env.yml"
+    shell:
+        SCRIPTSDIR + "simplify_blast.R"
 
 
 # Make a custom BLAST database from fasta file
