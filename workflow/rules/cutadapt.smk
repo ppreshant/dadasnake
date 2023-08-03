@@ -8,7 +8,7 @@ def get_lib_perRunAndSample(wildcards,prefix,suffix):
 
 localrules: primers_control
 
-rule primers_control:
+rule primers_control: # confirms that the rules relating to primers are done
     input:
         expand("preprocessing/{samples.run}/{samples.sample}.{direction}.fastq.gz", samples=samples.itertuples(), direction=["fwd","rvs"]),
         "reporting/readNumbers.tsv",
