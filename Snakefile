@@ -184,3 +184,7 @@ rule clean_filtered_outputs:
 
 # after clearing these intermediate files, run snakemake with these files as target:
 # stats/multiqc_filtered_{fwd,rvs}_report.html stats/QC_filtered.1.{fwd,rvs}.pdf reporting/filteredNumbers_perLibrary.tsv
+
+# include rules for BLAST wrapper
+include:
+    "workflow/rules/blast_wrapper_rules.smk"

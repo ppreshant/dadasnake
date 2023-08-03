@@ -1,0 +1,6 @@
+name: tidyverse_env
+channels:
+ - conda-forge
+dependencies:
+ - r-base
+ - r-tidyverse
