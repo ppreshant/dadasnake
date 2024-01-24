@@ -38,6 +38,7 @@ filtering:
   max_EE:
     fwd: 4 # August uses 4..; default of 2; changed from 16s.yml of 0.2 - seems too stringent, only 400 sequences are left
     rvs: 4 # " ; 5 was recommended when rvs are poorer - DADA2 tutorial
+  # also try trim_left of 10 for both fwd and rev
 dada:
     pool: false # default is 'false' -- "pseudo" includes singletons/rare ASVs
 blast:  # what is the point of BLAST if taxonomy is being done by other tools?
