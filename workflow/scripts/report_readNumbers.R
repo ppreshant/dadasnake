@@ -26,7 +26,7 @@ if(snakemake@params[["currentStep"]] == "raw"){
   })
 
   # ensure that the prefix directory ends with a single '/'
-  prefix <- gsub("[/]{2}$","/",paste0(snakemake@config[["raw_directory"]],"/"))
+  prefix <- gsub("[/]{2}$","/",paste0(snakemake@params[["raw_directory"]],"/"))
 
   # get the raw file names (which should match to the r1_file, r2_file columns in the sample_table.tsv)
   names(readnums) <- gsub(paste0("^[/]{0,1}[^/]*",prefix),"",names(readnums)) # remove the directory path prefix and anything before
@@ -106,7 +106,7 @@ if(snakemake@params[["currentStep"]] == "raw"){
   }
   print("extracting read numbers")
   getN <- function(x) sum(getUniques(x))
-  if(length(filesOI)>1 | !snakemake@config[['dada']][['pool']] %in% c("true","pseudo")){
+  if(length(filesOI)>1 | !snakemake@params[['pool']] %in% c("true","pseudo")){
     readnums <- sapply(filesOI,function(x){
       if(file.info(x)$size>0) getN(readRDS(x)) else 0
     })
