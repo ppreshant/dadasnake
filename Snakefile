@@ -80,9 +80,9 @@ else:
                 include:
                     "workflow/rules/dada.single.pool.smk"
 
-# common processing for paired and non-paired end reads
+# biom/phyloseq handoff: common processing for paired and non-paired end reads
 if 'dada' in STEPS:
-    if config['big_data']:
+    if config['big_data']: # recommended for > 1000 samples, w high memory nodes
         include:
             "workflow/rules/bigdada.common.smk"
         include:
@@ -179,7 +179,7 @@ rule taxonomyTable_to_fasta: # run from the datasnake directory within conda sna
     message: "Saved OTUs into a single fasta file"
     shell: # Remove header, grab first two columns from input, make fasta
         r"""
-        touch {output}
+        touch {output} # make empty fasta file
         cat {input} | tail +2 | awk -F'\t' '{{print ">" $1 "\n" $2}}' > {output}
         """
 
