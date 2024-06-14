@@ -6,6 +6,7 @@ dada_env_common/
 dada_env_common_2/
 dada_env_test/
 testoutput/
+test_output/
 test.*
 snakemake_env/
 conda/
@@ -20,3 +21,4 @@ dadasnake_initialized/
 *.stderr
 *.stdout
 dadasnake_output
+config/backup-config.RAM_16S.yaml
