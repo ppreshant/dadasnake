@@ -106,7 +106,7 @@ if EMAIL != "":
         print("Your email address is not valid, you will not receive notifications.")
 
 
-# clarify path for raw data directory
+# clarify path for sample_table data directory
 if os.path.isabs(os.path.expandvars(config['sample_table'])): # absolute path
     sam_path = os.path.expandvars(config['sample_table'])
 else:
