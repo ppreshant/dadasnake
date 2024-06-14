@@ -1,36 +1,40 @@
+# GENERAL INFORMATION
 email: ""
-raw_directory: "../../data_NGS" # absolute or relative paths, both are fine
-sample_table: "../sample_list/S056_16S.tsv"
-outputdir: "../output_S056_16S"
+raw_directory: "../NGS_data/S090" # absolute or relative paths (to dadasnake/), both are fine
+sample_table: "../sample_list/S090_16S.tsv"
+outputdir: "../NGS_analysis/S090_16S"
+# Note that database paths below are relative path to output directory
+
+# STEPS
 taxonomy:
   mothur:
     do: false
-    db_path: "../DBs"
+    db_path: "../../DBs" # relative path to output directory
     tax_db: "SILVA_138.1_SSURef_NR99_tax_silva"
   decipher:
     do: true
-    db_path: "../DBs/decipher"
+    db_path: "../../DBs/decipher" # relative path to output directory
     tax_db: "SILVA_SSU_r138_2019.RData"
     db_short_names: "SILVA_SSU_r138_2019"
     look_for_species: true # Does not work with NNNs in unmerged reads with just_concatenate -/ needs some code editing decipher_ID
-    spec_db: "../DBs/DADA2/silva_species_assignment_v138.1.fa.gz"
+    spec_db: "../../DBs/DADA2/silva_species_assignment_v138.1.fa.gz" # relative path to output directory
 do_primers: true
 do_dada: true
 do_taxonomy: true
 do_postprocessing: true
 primers:
-# oRM17-18 : 16S-NGS
+## oRM20,18: 16S.2
   fwd:
-    sequence: AACGCGAAGAACCTTAC
-    name: oRM017_968F_AOS20B
+    sequence: GCAACGCGAAGAACCTTACC
+    name: oRM020 U64NGS-F ~ 967F
   rvs:
-    sequence: TGACGGGCGGTGWGTRCA # primer's own 5'-3' direction
+    sequence: TGACGGGCGGTGWGTRCA
     name: oRM018_1391R_AOS57B
 paired: true
-sequencing_direction: 'fwd_1'   # "unknown" if the direction is ambiguous/varies across files
+sequencing_direction: 'fwd_1'   # "unknown" if the direction is ambiguous/varies across files. Amplizon_Ez is fwd_1 usually
 filtering:
   trunc_length:
-    fwd: 0 #-- ~200-230 ; discards shorter this lengthm hence retains reads with only ends that are bad # default was 0 ; trying arbitrary cutoff
+    fwd: 0 #-- ~200-230 ; discards shorter than this length hence retains reads with only ends that are bad # default was 0 ; trying arbitrary cutoff
     rvs: 0 # ~ 160 - 230 ; default was 0 ; quality steadily declining, so trying arbitrary cutoff
   trunc_qual:
     fwd: 2 # changed from 16s.yml = 13 -> too high, discarding too many reads, retaining only short ones of 30 bp
@@ -41,6 +45,7 @@ filtering:
   # also try trim_left of 10 for both fwd and rev
 dada:
     pool: false # default is 'false' -- "pseudo" includes singletons/rare ASVs
+    # read: https://benjjneb.github.io/dada2/pseudo.html#Pseudo-pooling
 blast:  # what is the point of BLAST if taxonomy is being done by other tools?
   do: false     # changed from 16s.yml        # no BLAST database present
   run_basta: false # changed from 16s.yml
