@@ -1,8 +1,9 @@
 # Blast related rules from the snakemake wrapper. Reference :
 # https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/blast.html?highlight=blast
 
-# name of the custom database file # put into config?
-DB_SOURCE_FILENAME = '9-species-16S' # skip the .fasta extension
+# name of the custom database file
+DB_SOURCE_FILENAME = '6-species-S090' # skip the .fasta extension
+# TODO: put into config if integrating this into the dadasnake pipeline
 
 
 # run blastn : nucleotides ; adapted to run inside Dadasnake workflow -- directories and such
@@ -10,7 +11,7 @@ DB_SOURCE_FILENAME = '9-species-16S' # skip the .fasta extension
 rule blast_nucleotide:
     input:
         query = "sequenceTables/all.seqs.fasta",  # general command: {sample}.fasta
-        blastdb=multiext("../DBs/blast/" + DB_SOURCE_FILENAME + '/database',
+        blastdb=multiext("../../DBs/blast/" + DB_SOURCE_FILENAME + '/database',
             ".ndb",
             ".nhr",
             ".nin",
@@ -50,12 +51,13 @@ rule simplify_blast:
 
 
 # Make a custom BLAST database from fasta file
-
+# Note: DB_SOURCE_FILENAME needs to be entered in the beginning of this file
+# paths here are relative to the output directory of dadasnake workflow
 rule blast_makedatabase_nucleotide:
     input:
-        fasta="../reference_sequences/" + DB_SOURCE_FILENAME + '.fasta' # path relative to dadasnake or the output directory
+        fasta="../../reference_sequences/" + DB_SOURCE_FILENAME + '.fasta' # path relative to dadasnake or the output directory
     output:
-        DB_OUTPUTS = multiext("../DBs/blast/" + DB_SOURCE_FILENAME + '/database',
+        DB_OUTPUTS = multiext("../../DBs/blast/" + DB_SOURCE_FILENAME + '/database',
             ".ndb",
             ".nhr",
             ".nin",
@@ -65,13 +67,16 @@ rule blast_makedatabase_nucleotide:
             ".nto"
             )
     log:
-        "../DBs/blast/" + DB_SOURCE_FILENAME + "/" + DB_SOURCE_FILENAME + ".log"
+        "../../DBs/blast/" + DB_SOURCE_FILENAME + "/" + DB_SOURCE_FILENAME + ".log"
     params:
         "-input_type fasta -blastdb_version 5 -parse_seqids"
     wrapper:
         "v1.21.0/bio/blast/makeblastdb"
-# run independently inside DBs folder with
-# snakemake -s ../dadasnake/workflow/rules/blast_wrapper_rules.smk -c 4 --use-conda blast_makedatabase_nucleotide
+# run with this command, inside dadasnake/ in the snakemake_conda env
+# snakemake --configfile config/config.RAM_16S.yaml --use-conda --conda-prefix $PWD/conda --cores 3 blast_makedatabase_nucleotide
+# or below command runs it from working dir of dadasnake/dadasnake_output
+# snakemake -c 3 --use-conda blast_makedatabase_nucleotide
+
 
 # remove the specific blast database : folder and subcontents.. USED ONLY FOR TESTING PURPOSES
 rule clear_database:
