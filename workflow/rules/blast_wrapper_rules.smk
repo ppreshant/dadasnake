@@ -43,10 +43,10 @@ rule simplify_blast:
     threads:
         2
     output:
-        "mapping/top_all.seqs.blast.txt"
+        "mapping/top_all.seqs.blast.tsv"
     conda:
         ENVDIR + "tidyverse_env.yml"
-    shell:
+    script:
         SCRIPTSDIR + "simplify_blast.R"
 
 
