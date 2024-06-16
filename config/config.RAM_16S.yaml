@@ -46,7 +46,7 @@ filtering:
 dada:
     pool: false # default is 'false' -- "pseudo" includes singletons/rare ASVs
     # read: https://benjjneb.github.io/dada2/pseudo.html#Pseudo-pooling
-blast:  # what is the point of BLAST if taxonomy is being done by other tools?
+blast:  # blast is for slavaging any unmapped reads from above taxonomy methods
   do: false     # changed from 16s.yml        # no BLAST database present
   run_basta: false # changed from 16s.yml
 pair_merging:
