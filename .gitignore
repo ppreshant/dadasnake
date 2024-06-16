@@ -22,3 +22,6 @@ dadasnake_initialized/
 *.stdout
 dadasnake_output
 config/backup-config.RAM_16S.yaml
+.Rproj.user
+workflow/scripts/scripts.Rproj
+workflow/scripts/.Rhistory
