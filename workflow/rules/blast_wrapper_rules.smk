@@ -33,17 +33,21 @@ rule blast_nucleotide:
         extra=""
     wrapper:
         "v1.21.0/bio/blast/blastn"
+# note: currently one entry for each sequence is provided, this can be changed by max_target_seqs
+# ref: https://www.ncbi.nlm.nih.gov/books/NBK279684/. I am using an R script to filter the top hit
 
 # Simplify BLAST output. Select top hit per query : with custom R script
 rule simplify_blast:
     input:
-        "mapping/all.seqs.blast.txt"
+        "mapping/all.seqs.blast.txt",
+        summary_table = "sequenceTables/all.seqTab.tsv"
     log:
         "logs/all.seqs.blast.log"
     threads:
         2
     output:
-        "mapping/top_all.seqs.blast.tsv"
+        "mapping/top_all.seqs.blast.tsv",
+        summary_out = "sequenceTables/all.seqTab_custom-blast.tsv"
     conda:
         ENVDIR + "tidyverse_env.yml"
     script:
