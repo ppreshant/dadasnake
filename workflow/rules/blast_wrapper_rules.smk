@@ -47,7 +47,8 @@ rule simplify_blast:
         2
     output:
         "mapping/top_all.seqs.blast.tsv",
-        summary_out = "sequenceTables/all.seqTab_custom-blast.tsv"
+        summary_out = "sequenceTables/all.seqTab_custom-blast.tsv",
+        collated_summary = "sequenceTables/collated.seqTab_custom-blast.tsv"
     conda:
         ENVDIR + "tidyverse_env.yml"
     script:
