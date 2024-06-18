@@ -47,12 +47,29 @@ rule simplify_blast:
         2
     output:
         "mapping/top_all.seqs.blast.tsv",
-        summary_out = "sequenceTables/all.seqTab_custom-blast.tsv",
-        collated_summary = "sequenceTables/collated.seqTab_custom-blast.tsv"
+        summary_out = "sequenceTables/all.seqTab_custom-blast.tsv"
     conda:
         ENVDIR + "tidyverse_env.yml"
     script:
         SCRIPTSDIR + "simplify_blast.R"
+
+
+# Collate BLAST output and plot. Merge ASV counts mapping to same organism
+rule collate_plot_blast:
+    input:
+        "sequenceTables/all.seqTab_custom-blast.tsv"
+    log:
+        "logs/cleanup.blast.log"
+    threads:
+        1
+    output:
+        collated_summary = "sequenceTables/collated.seqTab_custom-blast.tsv",
+        plot_linear = 'mapping/plot_collated_blast.pdf',
+        plot_log = 'mapping/plot-log_collated_blast.pdf'
+    conda:
+        ENVDIR + "tidyverse_env.yml"
+    script:
+        SCRIPTSDIR + "collate_plot_blast.R"
 
 
 # Make a custom BLAST database from fasta file
