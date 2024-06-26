@@ -82,6 +82,7 @@ rule primer_numbers:
 
 
 # run cutadapt to trim primers
+# FIRST CUTADAPT: -g, -G remove 5' adapters ; SECOND: -a, -A remove 3' adapters if present
 if config['sequencing_direction'] == "fwd_1":
     rule cut_primer_both:
         input:
