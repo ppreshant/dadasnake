@@ -1,8 +1,8 @@
 # GENERAL INFORMATION
 email: ""
-raw_directory: "../NGS_data/S090" # absolute or relative paths (to dadasnake/), both are fine
-sample_table: "../sample_list/S090_16S.tsv"
-outputdir: "../NGS_analysis/S090_16S"
+raw_directory: "../NGS_data/S090/set2" # absolute or relative paths (to dadasnake/), both are fine
+sample_table: "../sample_list/S090-set2_16S.tsv" # include file extension
+outputdir: "../NGS_analysis/S090-set2_16S"
 # Note that database paths below are relative path to output directory
 
 # STEPS
@@ -28,7 +28,7 @@ primers:
     sequence: GCAACGCGAAGAACCTTACC
     name: oRM020 U64NGS-F ~ 967F
   rvs:
-    sequence: TGACGGGCGGTGWGTRCA
+    sequence: GACGGGCGGTGWGTRCA
     name: oRM018_1391R_AOS57B
 paired: true
 sequencing_direction: 'fwd_1'   # "unknown" if the direction is ambiguous/varies across files. Amplizon_Ez is fwd_1 usually
