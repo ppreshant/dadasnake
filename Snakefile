@@ -42,7 +42,7 @@ if config['paired']:
                 include:
                     "workflow/rules/dada.paired.smk"
             else:
-                include:
+                include: # big_data: recommended for > 1000 samples, used w high memory nodes
                     "workflow/rules/bigdada.paired.smk"
         else:
             if config['dada']['pool']=="within_run":
@@ -82,7 +82,7 @@ else:
 
 # biom/phyloseq handoff: common processing for paired and non-paired end reads
 if 'dada' in STEPS:
-    if config['big_data']: # recommended for > 1000 samples, w high memory nodes
+    if config['big_data']: # recommended for > 1000 samples, used w high memory nodes
         include:
             "workflow/rules/bigdada.common.smk"
         include:
