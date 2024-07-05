@@ -102,8 +102,8 @@ if config['sequencing_direction'] == "fwd_1":
         shell:
             """
             TMPD=$(mktemp -d -t --tmpdir={TMPDIR} 'XXXXXX')
-            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
-            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
 
             cutadapt -g {config[primers][fwd][sequence]} -G {config[primers][rvs][sequence]} \
             {config[primer_cutting][indels]} -n {config[primer_cutting][count]} \
@@ -139,8 +139,8 @@ elif config['sequencing_direction'] == "rvs_1":
             """
             TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
 
-            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
-            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
 
             cutadapt -g {config[primers][rvs][sequence]} -G {config[primers][fwd][sequence]} \
              {config[primer_cutting][indels]} -n {config[primer_cutting][count]} \
@@ -175,8 +175,8 @@ else:
         shell:
             """
             TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
-            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
-            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
 
             cutadapt -g {config[primers][fwd][sequence]} -G {config[primers][rvs][sequence]} \
              {config[primer_cutting][indels]} -n {config[primer_cutting][count]} \

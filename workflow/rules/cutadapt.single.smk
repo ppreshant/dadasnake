@@ -22,7 +22,7 @@ rule primers_control:
 rule combine_or_rename:
     input:
         "reporting/primerNumbers_perLibrary.tsv",
-        files = lambda wildcards: get_lib_perRunAndSample(wildcards,"preprocessing/{run}/",".fastq.gz")    
+        files = lambda wildcards: get_lib_perRunAndSample(wildcards,"preprocessing/{run}/",".fastq.gz")
     output:
         "preprocessing/{run}/{sample}.fastq.gz"
     wildcard_constraints:
@@ -54,7 +54,7 @@ rule input_numbers:
     conda: ENVDIR + "dada2_env.yml"
     log: "logs/countInputReads.log"
     script:
-        SCRIPTSDIR+"report_readNumbers.single.R" 
+        SCRIPTSDIR+"report_readNumbers.single.R"
 
 
 rule primer_numbers:
@@ -101,9 +101,9 @@ if config['sequencing_direction'] == "fwd_1":
         message: "Running cutadapt on {input}. Assuming forward primer is in read {config[primers][fwd][sequence]}"
         shell:
             """
-            TMPD=$(mktemp -d -t --tmpdir={TMPDIR} 'XXXXXX') 
-            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
-            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            TMPD=$(mktemp -d -t --tmpdir={TMPDIR} 'XXXXXX')
+            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
             cutadapt -g {config[primers][fwd][sequence]} \
             {config[primer_cutting][indels]} -n {config[primer_cutting][count]} -O {config[primer_cutting][overlap]} \
             -m 1 {params.nextseq}\
@@ -137,8 +137,8 @@ elif config['sequencing_direction'] == "rvs_1":
             """
             TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
 
-            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
-            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
 
             cutadapt -g {config[primers][rvs][sequence]} \
             {config[primer_cutting][indels]} -n {config[primer_cutting][count]} -O {config[primer_cutting][overlap]} \
@@ -173,8 +173,8 @@ else:
         shell:
             """
             TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
-            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
-            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHNatugcyrswkbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            FWD_RC=`echo {config[primers][fwd][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
+            RVS_RC=`echo {config[primers][rvs][sequence]} | tr '[ATUGCYRSWKMBDHVNatugcyrswkmbdhvn]' '[TAACGRYSWMKVHDBNtaacgryswmkvhdbn]' |rev`
 
             cutadapt -g {config[primers][fwd][sequence]} \
             {config[primer_cutting][indels]} -n {config[primer_cutting][count]} -O {config[primer_cutting][overlap]} \
@@ -182,7 +182,7 @@ else:
              -j {threads} -e {config[primer_cutting][perc_mismatch]} \
              --untrimmed-output=$TMPD/{wildcards.library}.unt.fastq.gz \
              -o $TMPD/{wildcards.library}.fastq.gz {input} &> {log}
-            
+
             cutadapt -a $RVS_RC \
             {config[primer_cutting][indels]} -n {config[primer_cutting][count]} \
               -m 1 \
@@ -209,6 +209,3 @@ else:
 
             cat $TMPD/{wildcards.library}.final.fastq.gz >> {output}
             """
-
-
-
