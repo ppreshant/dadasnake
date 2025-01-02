@@ -1,3 +1,5 @@
+# for a given output file (cutadapt), get the respective raw fastq file using wildcard input function
+# ref : https://snakemake.readthedocs.io/en/stable/snakefiles/rules.html#input-functions
 def get_fastq(wildcards):
     fastqs = config['raw_directory'] + "/" + samples.loc[(wildcards.library,wildcards.run), ["r1_file", "r2_file"]].dropna()
     return fastqs
@@ -82,7 +84,7 @@ rule primer_numbers:
 
 
 # run cutadapt to trim primers
-# FIRST CUTADAPT: -g, -G remove 5' adapters ; SECOND: -a, -A remove 3' adapters if present
+# FIRST CUTADAPT: -g, -G remove 5' adapters ; SECOND: -a, -A remove 3' adapters if present (for short reads covering full amplicon~)
 if config['sequencing_direction'] == "fwd_1":
     rule cut_primer_both:
         input:
